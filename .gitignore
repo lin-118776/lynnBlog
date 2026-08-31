@@ -1,0 +1,26 @@
+# 依赖与构建产物
+node_modules/
+dist/
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# 运行时数据
+uploads/
+*.log
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 本地环境配置（如需提交请先环境变量化敏感信息）
+.env
+.env.local
+
+# 工作台本地数据（记忆/会话/agent 配置，不随项目发布）
+.workbuddy/
+.agents/
+.codex/

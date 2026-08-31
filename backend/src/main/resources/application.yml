@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: personalcenter
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 数据库需先创建 personalcenter 库（字符集 utf8mb4）
+    url: jdbc:mysql://localhost:3306/personalcenter?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      # 文件上传大小限制：20MB
+      max-file-size: 20MB
+      max-request-size: 20MB
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
+
+mybatis-plus:
+  # XML 映射文件位置（后续如需自定义 SQL 时使用）
+  mapper-locations: classpath*:mapper/**/*.xml
+  type-aliases-package: com.example.personalcenter.entity
+  configuration:
+    # 控制台输出 SQL，便于调试
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      # 主键自增
+      id-type: auto
+
+# 自定义配置：JWT
+jwt:
+  # Token 密钥，生产环境务必替换为足够长的随机字符串
+  secret: personalcenter-jwt-secret-key-please-change-in-production-2026
+  # Token 过期时间：7 天（毫秒）
+  expiration: 604800000
+
+# 自定义配置：本地文件存储根目录（相对后端运行目录）
+upload:
+  path: ./uploads/
