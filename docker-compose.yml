@@ -49,7 +49,14 @@ services:
       OSS_ACCESS_SECRET: ${OSS_ACCESS_SECRET:-}
       OSS_URL_PREFIX: ${OSS_URL_PREFIX:-}
       # 若部署机访问 github.com 处于 MITM 加速代理下，抓取贡献图需放行自签证书：
-      # GITHUB_INSECURE_TLS: "true"   （生产公网直连时保持默认 false）
+      # .env 中设 GITHUB_INSECURE_TLS=true（生产公网直连时保持默认 false）
+      GITHUB_INSECURE_TLS: ${GITHUB_INSECURE_TLS:-false}
+    # 本机 Watt 加速环境：github.com 被 hosts 劫持到 127.0.0.1:443（Watt SNI 代理），
+    # 容器内解析会拿到 127.0.0.1 导致连接拒绝。此映射让容器把 github.com 指到宿主机网关
+    # （host-gateway = host.docker.internal），借宿主机的 Watt 代理出去。
+    # ⚠️ 部署到公网服务器时删除下面两行（服务器可直连 GitHub，不需要此映射）！
+    extra_hosts:
+      - "github.com:host-gateway"
     volumes:
       - uploads-data:/app/uploads
 

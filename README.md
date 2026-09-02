@@ -112,9 +112,15 @@ docker compose up -d --build         # 一键启动 MySQL + 后端 + 前端
 | 文件 | `/api/file` | 图片上传（本地 / OSS） |
 | 联系方式 | `/api/contact` | 公开读取、登录后更新 |
 
-## 🖼 截图
+## 🖼 页面预览
 
-> （TODO：补充首页 / Blog / 文章详情 / 控制台截图，让 README 一眼种草）
+| 首页 | Blog |
+| :---: | :---: |
+| ![首页](docs/screenshots/home.png) | ![Blog](docs/screenshots/blog.png) |
+
+| 作品（含 GitHub 贡献热力图） | 穿搭墙 | 友链 |
+| :---: | :---: | :---: |
+| ![作品](docs/screenshots/works.png) | ![穿搭](docs/screenshots/lolita.png) | ![友链](docs/screenshots/friends.png) |
 
 ## 📝 License
 

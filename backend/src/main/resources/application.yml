@@ -41,6 +41,11 @@ jwt:
   # Token 过期时间：7 天（毫秒）
   expiration: 604800000
 
+# 自定义配置：GitHub 贡献图抓取
+github:
+  # 本机处于 MITM 加速代理（如 Watt）下时置 true 放行自签证书；生产公网直连保持 false
+  insecure-tls: ${GITHUB_INSECURE_TLS:false}
+
 # 自定义配置：本地文件存储根目录（相对后端运行目录）
 upload:
   path: ./uploads/
