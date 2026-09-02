@@ -36,8 +36,11 @@ public class LolitaReq {
     /** 购买价格 */
     private BigDecimal purchasePrice;
 
-    /** 状态（预约中/在途/现货/已出/已送人） */
+    /** 状态（预约中/在途/待补尾款/现货/已出/已送人） */
     private String status;
+
+    /** 待补金额（状态为"待补尾款"时填写） */
+    private BigDecimal balanceDue;
 
     /** 存放位置 */
     private String location;

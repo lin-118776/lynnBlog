@@ -19,13 +19,6 @@
         </span>
       </li>
       <li class="feature">
-        <span class="feat-icon"><AppIcon name="message" :size="18" /></span>
-        <span class="feat-body">
-          <span class="feat-name">面试广场</span>
-          <span class="feat-desc">公开/私有面试经验复盘</span>
-        </span>
-      </li>
-      <li class="feature">
         <span class="feat-icon"><AppIcon name="lock" :size="18" /></span>
         <span class="feat-body">
           <span class="feat-name">秘密日记</span>

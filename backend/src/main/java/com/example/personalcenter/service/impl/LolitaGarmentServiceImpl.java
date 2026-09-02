@@ -97,7 +97,8 @@ public class LolitaGarmentServiceImpl extends ServiceImpl<LolitaGarmentMapper, L
         garment.setSize(req.getSize());
         garment.setPurchaseDate(req.getPurchaseDate());
         garment.setPurchasePrice(req.getPurchasePrice());
-        garment.setStatus(StringUtils.hasText(req.getStatus()) ? req.getStatus() : "现货");
+        garment.setStatus(StringUtils.hasText(req.getStatus()) ? req.getStatus() : "拥有");
+        garment.setBalanceDue(req.getBalanceDue());
         garment.setLocation(req.getLocation());
         garment.setCoverImage(req.getCoverImage());
         garment.setImages(req.getImages());

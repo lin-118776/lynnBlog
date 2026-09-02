@@ -46,7 +46,7 @@ defineProps({
 .empty-title {
   margin: 0 0 8px;
   font-size: 17px;
-  font-weight: 600;
+  font-weight:500;
   color: var(--text-main);
 }
 

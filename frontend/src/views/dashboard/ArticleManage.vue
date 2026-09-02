@@ -31,6 +31,14 @@
       <el-table-column label="分类" width="110">
         <template #default="{ row }">{{ row.categoryName || '-' }}</template>
       </el-table-column>
+      <el-table-column label="标签" min-width="150">
+        <template #default="{ row }">
+          <span v-if="row.tags" class="manage-tags">
+            <el-tag v-for="t in String(row.tags).split(',').filter(Boolean)" :key="t" size="small" class="mtag" effect="plain">{{ t }}</el-tag>
+          </span>
+          <span v-else class="no-tags">-</span>
+        </template>
+      </el-table-column>
       <el-table-column label="状态" width="90">
         <template #default="{ row }">
           <el-tag :type="row.status === 1 ? 'success' : 'info'">{{ row.status === 1 ? '已发布' : '草稿' }}</el-tag>
@@ -64,6 +72,9 @@
         </el-form-item>
         <el-form-item label="摘要">
           <el-input v-model="form.summary" type="textarea" :rows="2" maxlength="255" show-word-limit placeholder="一句话介绍这篇文章" />
+        </el-form-item>
+        <el-form-item label="标签">
+          <el-input v-model="form.tags" maxlength="120" placeholder="多个标签用英文逗号分隔，如：搭建,AI,教程（将展示在标签云，可点击筛选）" />
         </el-form-item>
         <div class="form-row">
           <el-form-item label="分类">
@@ -119,7 +130,7 @@ const editingId = ref(null)
 const coverInput = ref(null)
 const coverUploading = ref(false)
 const query = reactive({ page: 1, size: 10, keyword: '', categoryId: null, status: null })
-const form = reactive({ title: '', summary: '', categoryId: null, coverImage: '', status: 1, content: '' })
+const form = reactive({ title: '', summary: '', categoryId: null, tags: '', coverImage: '', status: 1, content: '' })
 const toolbars = ['bold', 'italic', 'underline', 'strike', 'title', '-', 'quote', 'unorderedList', 'orderedList', '-', 'code', 'link', 'image', 'table', '-', 'preview', 'fullscreen']
 
 async function load(page = query.page) {
@@ -146,7 +157,7 @@ async function loadCategories() {
 
 function resetForm() {
   editingId.value = null
-  Object.assign(form, { title: '', summary: '', categoryId: null, coverImage: '', status: 1, content: '' })
+  Object.assign(form, { title: '', summary: '', categoryId: null, tags: '', coverImage: '', status: 1, content: '' })
 }
 
 function openCreate() {
@@ -160,6 +171,7 @@ function openEdit(row) {
     title: row.title,
     summary: row.summary,
     categoryId: row.categoryId,
+    tags: row.tags || '',
     coverImage: row.coverImage,
     status: row.status,
     content: row.content
@@ -242,10 +254,12 @@ onMounted(() => {
 .filter-bar .el-input{width:260px}
 .filter-bar .el-select{width:150px}
 .article-table{width:100%}
-.article-link{color:var(--brand);font-weight:600}
+.article-link{color:var(--brand);font-weight:500}
 .article-link:hover{text-decoration:underline}
 .pagination{margin-top:16px;justify-content:flex-end}
 .form-row{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}
+.mtag{margin:2px 4px 2px 0}
+.no-tags{color:var(--text-sub,#8a6475)}
 .editor{min-height:420px}
 .cover-upload{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:120px;overflow:hidden;border:2px dashed var(--el-color-primary-light-7);border-radius:12px;background:var(--el-color-primary-light-9);cursor:pointer;transition:border-color .2s ease,background-color .2s ease}
 .cover-upload:hover{border-color:var(--brand)}

@@ -42,9 +42,10 @@ const userInfo = computed(() => {
 
 const modules = [
   { path: '/dashboard/article', icon: 'pen', name: '文章管理', desc: '撰写与管理技术文章' },
-  { path: '/dashboard/interview', icon: 'message', name: '面试库管理', desc: '维护公开/私有面试复盘' },
   { path: '/dashboard/diary', icon: 'lock', name: '私密日记本', desc: '记录只属于你的内容' },
   { path: '/dashboard/lolita', icon: 'sparkles', name: '我的衣橱', desc: '管理穿搭与兴趣收藏' },
+  { path: '/dashboard/friends', icon: 'grid', name: '友链管理', desc: '维护交换友链的好朋友们' },
+  { path: '/dashboard/projects', icon: 'briefcase', name: '作品管理', desc: '展示你的项目与 GitHub 链接' },
   { path: '/dashboard/files', icon: 'image', name: '我的相册', desc: '上传与管理素材文件' }
 ]
 </script>
@@ -157,7 +158,7 @@ const modules = [
 
 .module-name {
   font-size: 14.5px;
-  font-weight: 600;
+  font-weight:500;
   color: var(--text-main);
 }
 

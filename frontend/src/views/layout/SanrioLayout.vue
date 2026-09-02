@@ -32,6 +32,12 @@
             class="nav-tab nav-console"
             @click="menuOpen = false"
           ><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/><circle cx="12" cy="12" r="3.2"/></svg></span>登录</router-link>
+          <router-link
+            to="/search"
+            class="nav-tab nav-search"
+            :title="`搜索（当前页：${route.meta?.title || ''}）`"
+            @click="menuOpen = false"
+          ><span class="tab-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-label="全站搜索"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></span></router-link>
         </div>
       </div>
     </nav>
@@ -51,7 +57,10 @@
           <section class="profile-card">
             <div class="profile-top">
               <!-- 头像：替换成 <img src="assets/images/pfp.png" alt="头像"> -->
-              <div class="avatar"><ImgSlot variant="avatar" label="头像<br />120 × 120" /></div>
+              <div class="avatar">
+                <img v-if="avatarSrc" :src="avatarSrc" alt="Lynn 的头像" />
+                <ImgSlot v-else variant="avatar" label="头像<br />120 × 120" />
+              </div>
               <div><span class="online">ONLINE!</span><p class="profile-bio">幸运一点点すこしのこううん♥</p></div>
             </div>
             <!-- 心情背景图：想用图时给 .profile-note 加 background-image -->
@@ -64,13 +73,14 @@
             <div
               v-if="tooltip.visible"
               class="contact-tip"
+              :class="{ 'is-readonly': !isLoggedIn }"
               :style="tipStyle"
               @dblclick="startEdit"
             >
               <template v-if="!editing">
                 <span class="tip-label">{{ tooltip.label }}</span>
                 <span class="tip-value">{{ contacts[tooltip.key] }}</span>
-                <span class="tip-hint">双击编辑</span>
+                <span v-if="isLoggedIn" class="tip-hint">双击编辑</span>
               </template>
               <template v-else>
                 <input
@@ -86,7 +96,7 @@
             <div class="contact-grid">
               <!-- 图标可替换成自己的图片或 SVG -->
               <a class="contact-link" href="#" aria-label="Bilibili" @mouseenter="showTip('bilibili', 'Bilibili', $event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 5.5 8.5 3.5M17.5 5.5 15.5 3.5"/><rect x="3" y="7" width="18" height="13" rx="3.5"/><path d="M7 11h.01M17 11h.01"/><path d="M9.5 15.5c1.3 1 3.7 1 5 0"/><path d="M3 9.5v-1M21 9.5v-1"/></svg><span>Bili</span></a>
-              <a class="contact-link" href="#" aria-label="GitHub" @mouseenter="showTip('github', 'GitHub', $event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-3.5c0-1 .1-1.6-.6-2.1 2.2-.2 4.6-1.1 4.6-4.7a3.7 3.7 0 0 0-1-2.5 3.4 3.4 0 0 0-.1-2.6s-.8-.3-2.7 1a9.3 9.3 0 0 0-5 0C8.4 6.4 7.6 6.6 7.6 6.6a3.4 3.4 0 0 0-.1 2.6 3.7 3.7 0 0 0-1 2.5c0 3.6 2.4 4.5 4.6 4.7-.4.3-.6.7-.6 1.3V22"/><path d="M9 19c-2.4.5-4-1-5-2"/></svg><span>GitHub</span></a>
+              <a class="contact-link" :href="githubLink" target="_blank" rel="noopener noreferrer" aria-label="GitHub" @mouseenter="showTip('github', 'GitHub', $event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 22v-3.5c0-1 .1-1.6-.6-2.1 2.2-.2 4.6-1.1 4.6-4.7a3.7 3.7 0 0 0-1-2.5 3.4 3.4 0 0 0-.1-2.6s-.8-.3-2.7 1a9.3 9.3 0 0 0-5 0C8.4 6.4 7.6 6.6 7.6 6.6a3.4 3.4 0 0 0-.1 2.6 3.7 3.7 0 0 0-1 2.5c0 3.6 2.4 4.5 4.6 4.7-.4.3-.6.7-.6 1.3V22"/><path d="M9 19c-2.4.5-4-1-5-2"/></svg><span>GitHub</span></a>
               <a class="contact-link" href="#" aria-label="TikTok" @mouseenter="showTip('tiktok', 'TikTok', $event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V6a2 2 0 0 1 2-2h4"/><path d="M9 12c0-1 4-1.5 6-3"/><circle cx="7.5" cy="18" r="2.5"/><circle cx="15.5" cy="15.5" r="2.5"/></svg><span>TikTok</span></a>
               <a class="contact-link" href="#" aria-label="小红书" @mouseenter="showTip('red', 'Red', $event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20.6S3 14.9 3 9.2C3 6 5.5 4 7.7 4c2 0 3.5 1.4 4.3 2.5C12.8 5.4 14.3 4 16.3 4 18.5 4 21 6 21 9.2c0 5.7-9 11.4-9 11.4Z"/></svg><span>Red</span></a>
               <a class="contact-link" href="#" aria-label="QQ" @mouseenter="showTip('qq', 'QQ', $event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c-3 1.6-5 4.2-5 7.2v2.6c0 2 2 3 2 3s-1 2.2-2 3.2c2 .9 4.2 1 5 .3 1 .8 3 .8 5-.3-1-1-2-3.2-2-3.2s2-1 2-3v-2.6c0-3-2-5.6-5-7.2Z"/><path d="M9.2 10.5h.01M14.8 10.5h.01"/><path d="M10.5 13.8c.9.8 2.1.8 3 0"/></svg><span>QQ</span></a>
@@ -95,8 +105,8 @@
           </section>
 
           <footer class="rail-footer">
-            <!-- 小图：替换成 <img src="assets/images/footer.png" alt="装饰图"> -->
-            <ImgSlot variant="small" label="小图" />
+            <!-- 装饰小图：images/mianze.jpg -->
+            <img class="rail-img" :src="mianzeSrc" alt="装饰图" />
             <p>本站图片素材均来源于网络，如有问题请联系我删除。</p>
           </footer>
         </aside>
@@ -110,16 +120,24 @@
 
     <div class="deco deco-bow" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"><path d="M8 16c-2-6 2-9 6-6 1-4 5-5 7-2 2-3 6-2 7 2 4-3 8 0 6 6-1 4-4 6-7 8-2 2-4 2-6 0-3-2-6-4-7-8Z"/><path d="M18 26c3 4 9 4 12 0"/></svg></div>
     <div class="deco deco-heart" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 20.6S3 14.9 3 9.2C3 6 5.5 4 7.7 4c2 0 3.5 1.4 4.3 2.5C12.8 5.4 14.3 4 16.3 4 18.5 4 21 6 21 9.2c0 5.7-9 11.4-9 11.4Z"/></svg></div>
+
+    <!-- 站点级部件：阅读进度条/回到顶部 + 右下换装按钮 -->
+    <ScrollGadgets />
+    <ThemePicker />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import ImgSlot from '../../components/ImgSlot.vue'
+import ThemePicker from '../../components/ThemePicker.vue'
+import ScrollGadgets from '../../components/ScrollGadgets.vue'
 import { listContacts, updateContact } from '../../api/contact'
 import { useAuth } from '../../composables/useAuth'
+import avatarSrc from '../../images/touxiang.jpg'
+import mianzeSrc from '../../images/mianze.jpg'
 
 const route = useRoute()
 const router = useRouter()
@@ -129,7 +147,7 @@ const menuOpen = ref(false)
 const navItems = [
   { to: '/', key: '', label: 'Home', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></svg>' },
   { to: '/blog', key: 'blog', label: 'Blog', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h5a3 3 0 0 1 3 3v11H7a2 2 0 0 1-2-2V5Z"/><path d="M10 8h6a3 3 0 0 1 3 3v7"/></svg>' },
-  { to: '/interview', key: 'interview', label: 'Interview', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4Z"/></svg>' },
+  { to: '/works', key: 'works', label: 'Works', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>' },
   { to: '/lolita', key: 'lolita', label: 'Lolita', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3.2 3.4 6.4 1.5 9-1.4 1.9-3.8 2-5.2.4-1.4-1.7-.4-4.6 2-6.4"/><path d="M7.5 16.5c2.4 1.8 4.4 1.5 5.8 0"/></svg>' },
   { to: '/friends', key: 'friends', label: 'Friends', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M15 3.1a4 4 0 0 1 0 7.8"/></svg>' },
   { to: '/guestbook', key: 'guestbook', label: 'Guestbook', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>' },
@@ -140,7 +158,7 @@ function isActive(key) {
   return (route.path.split('/')[1] || '') === key
 }
 
-// ===== Connect 联系方式浮窗：悬停显示、双击编辑、回车保存（后端接口持久化） =====
+// ===== Connect 联系方式浮窗：悬停显示；游客只读，登录后双击可编辑、回车保存（后端接口持久化） =====
 const defaultContacts = {
   bilibili: 'space.bilibili.com/待补充',
   github: 'github.com/待补充',
@@ -152,6 +170,16 @@ const defaultContacts = {
 
 const { isLoggedIn } = useAuth()
 const contacts = ref({ ...defaultContacts })
+
+// GitHub 跳转链接：优先用后台配置的联系方式；未配置/占位时跳博主主页
+const githubLink = computed(() => {
+  const raw = (contacts.value.github || '').trim()
+  if (raw && !raw.includes('待补充')) {
+    return raw.startsWith('http') ? raw : `https://${raw}`
+  }
+  return 'https://github.com/lin-118776'
+})
+
 const tooltip = ref({ visible: false, key: '', label: '' })
 const tipStyle = ref({})
 const editing = ref(false)
@@ -189,6 +217,8 @@ function hideTip() {
 
 async function startEdit() {
   if (!tooltip.value.visible) return
+  // 游客只读：未登录不允许编辑
+  if (!isLoggedIn.value) return
   editing.value = true
   editValue.value = contacts.value[tooltip.value.key] || ''
   await nextTick()
@@ -245,6 +275,10 @@ function cancelEdit() {
 .nav-console{margin-left:auto;color:var(--rose,#e45b8d);background:var(--pink-50,#fff7fa);border:1px solid var(--pink-200,#ffd0e1);border-radius:999px;box-shadow:none}
 .nav-console:hover{color:var(--berry,#a63b64);background:var(--pink-100,#ffe7f0);border-color:var(--pink-300,#ffb7d0);transform:translateY(-1px)}
 .nav-console.active{color:var(--berry,#a63b64);background:var(--pink-100,#ffe7f0);border-color:var(--pink-300,#ffb7d0);box-shadow:none}
+/* 全站搜索图标钮：悬停/激活给粉底圆角，更紧凑 */
+.nav-search{color:var(--rose,#e45b8d);border-radius:999px}
+.nav-search:hover{color:var(--berry,#a63b64);background:var(--pink-100,#ffe7f0)}
+.nav-search.active{background:linear-gradient(180deg,var(--pink-200,#ffd0e1),var(--pink-100,#ffe7f0));border-color:var(--line,#efc2d3)}
 .page{max-width:1380px;margin:0 auto;padding:calc(var(--nav-h) + 18px) 16px 40px}
 .layout{display:grid;grid-template-columns:var(--rail-w) minmax(0,1fr);gap:18px;align-items:start}
 .profile-rail{position:sticky;top:calc(var(--nav-h) + 18px);display:flex;flex-direction:column;gap:14px;min-width:0}
@@ -253,16 +287,17 @@ function cancelEdit() {
 .profile-card,.contact-card,.rail-footer{border:1px solid var(--line);border-radius:var(--radius-lg);background:var(--cream);box-shadow:var(--shadow)}
 .profile-card{overflow:hidden;padding:16px}
 .profile-top{display:grid;grid-template-columns:92px 1fr;gap:12px;align-items:center}
-.avatar{position:relative;border-radius:20px;border:3px solid #fff;box-shadow:0 5px 14px rgba(183,85,129,.18)}
+.avatar{position:relative;border-radius:20px;border:3px solid #fff;box-shadow:0 5px 14px rgba(183,85,129,.18);overflow:hidden}
+.avatar img{display:block;width:100%;height:100%;object-fit:cover}
 .online{display:inline-flex;align-items:center;gap:5px;margin-bottom:4px;color:var(--berry);font-size:12px;font-weight:800}
 .online:before{content:"";width:8px;height:8px;border-radius:50%;background:#59c48e;box-shadow:0 0 0 4px rgba(89,196,142,.14)}
 .profile-bio{margin:0;font-size:12px;line-height:1.55;color:var(--muted)}
 .profile-note{margin-top:14px;padding:12px 13px;border:1px solid var(--pink-200);border-radius:14px;background:linear-gradient(180deg,#fff8fb,#fff);color:var(--ink);font-size:12px;line-height:1.7}
 .contact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:12px}
-.contact-tip{position:fixed;z-index:60;display:flex;align-items:center;gap:8px;max-width:230px;padding:6px 12px;border:1px solid var(--pink-300,#ffb7d0);border-radius:12px;background:#fff;box-shadow:0 10px 22px rgba(183,85,129,.18);transform:translateX(-50%);font-size:11px;cursor:text;pointer-events:auto}
+.contact-tip{position:fixed;z-index:60;display:flex;align-items:center;gap:8px;max-width:230px;padding:6px 12px;border:1px solid var(--pink-300,#ffb7d0);border-radius:12px;background:#fff;box-shadow:0 10px 22px rgba(183,85,129,.18);transform:translateX(-50%);font-size:11px;cursor:text;pointer-events:auto}.contact-tip.is-readonly{cursor:default}
 .contact-tip:before{content:"";position:absolute;left:50%;top:100%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--pink-300,#ffb7d0)}
 .tip-label{color:var(--berry,#a63b64);font-weight:800;white-space:nowrap}
-.tip-value{color:var(--ink,#4a2b3a);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tip-value{color:var(--ink,#4a2b3a);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .tip-hint{margin-left:auto;color:var(--muted,#8a6475);font-size:9px;opacity:.75;white-space:nowrap}
 .tip-input{flex:1;min-width:120px;padding:4px 9px;border:1px solid var(--pink-300,#ffb7d0);border-radius:9px;background:#fff;color:var(--ink,#4a2b3a);font-size:11px;outline:none;font-family:inherit}
 .tip-input:focus{border-color:var(--rose,#e45b8d);box-shadow:0 0 0 3px rgba(228,91,141,.12)}
@@ -272,12 +307,13 @@ function cancelEdit() {
 .contact-link svg{width:21px;height:21px}
 .rail-footer{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center;padding:12px;font-size:10px;color:var(--muted)}
 .rail-footer p{margin:0;line-height:1.6}
+.rail-img{display:block;width:100%;height:56px;object-fit:cover;border-radius:12px;border:2px solid #fff;box-shadow:0 4px 10px rgba(183,85,129,.14)}
 .contact-card h2{display:flex;align-items:center;gap:7px;margin:0;padding:13px 15px;border-bottom:1px solid var(--pink-200);background:linear-gradient(180deg,#fff1f7,#ffe7f0);border-radius:var(--radius-lg) var(--radius-lg) 0 0;color:var(--berry);font-size:13px;letter-spacing:.5px}
 .contact-card h2 svg{width:16px;height:16px}
 .content-col{display:flex;flex-direction:column;gap:16px;min-width:0}
 .deco{position:fixed;pointer-events:none;z-index:500;opacity:.9}
 .deco-bow{right:18px;top:88px;width:44px;height:44px;color:var(--pink-400)}
-.deco-heart{right:38px;bottom:28px;width:24px;height:24px;color:var(--rose);opacity:.45}
+.deco-heart{left:18px;bottom:26px;width:24px;height:24px;color:var(--rose);opacity:.45}
 .mobile-toggle,.sidebar-backdrop{display:none}
 @media (max-width:980px){
   .layout{grid-template-columns:1fr}

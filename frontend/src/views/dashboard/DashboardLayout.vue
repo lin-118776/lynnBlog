@@ -19,10 +19,6 @@
           <AppIcon name="folder" :size="16" />
           <span>分类管理</span>
         </el-menu-item>
-        <el-menu-item index="/dashboard/interview">
-          <AppIcon name="message" :size="16" />
-          <span>面试库管理</span>
-        </el-menu-item>
         <el-menu-item index="/dashboard/diary">
           <AppIcon name="lock" :size="16" />
           <span>私密日记本</span>
@@ -30,6 +26,14 @@
         <el-menu-item index="/dashboard/lolita">
           <AppIcon name="sparkles" :size="16" />
           <span>我的衣橱</span>
+        </el-menu-item>
+        <el-menu-item index="/dashboard/friends">
+          <AppIcon name="grid" :size="16" />
+          <span>友链管理</span>
+        </el-menu-item>
+        <el-menu-item index="/dashboard/projects">
+          <AppIcon name="briefcase" :size="16" />
+          <span>作品管理</span>
         </el-menu-item>
         <el-menu-item index="/dashboard/files">
           <AppIcon name="image" :size="16" />
@@ -203,7 +207,7 @@ function logout() {
 }
 
 .header-title {
-  font-weight: 600;
+  font-weight:500;
   font-size: 15px;
 }
 
@@ -244,7 +248,7 @@ function logout() {
   background: linear-gradient(135deg, var(--brand), var(--brand-2));
   color: #fff;
   font-size: 12px;
-  font-weight: 600;
+  font-weight:500;
 }
 
 .logout-btn {

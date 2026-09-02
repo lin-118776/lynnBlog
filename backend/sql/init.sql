@@ -38,6 +38,7 @@ CREATE TABLE `article` (
   `view_count` int DEFAULT 0,
   `like_count` int DEFAULT 0,
   `category_id` bigint,
+  `tags` varchar(255) DEFAULT NULL COMMENT '标签（英文逗号分隔）',
   `user_id` bigint NOT NULL COMMENT '作者ID',
   `status` tinyint DEFAULT 1 COMMENT '0草稿 1已发布',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -115,7 +116,8 @@ CREATE TABLE `lolita_garment` (
   `size` varchar(20) DEFAULT NULL COMMENT '尺码',
   `purchase_date` date DEFAULT NULL,
   `purchase_price` decimal(10,2) DEFAULT NULL,
-  `status` varchar(20) DEFAULT '现货' COMMENT '预约中/在途/现货/已出/已送人',
+  `status` varchar(20) DEFAULT '现货' COMMENT '预约中/在途/待补尾款/现货/已出/已送人',
+  `balance_due` decimal(10,2) DEFAULT NULL COMMENT '待补金额（状态为待补尾款时填写）',
   `wear_count` int DEFAULT 0 COMMENT '穿着次数',
   `location` varchar(100) DEFAULT NULL COMMENT '存放位置',
   `cover_image` varchar(500) DEFAULT NULL COMMENT '主图URL',
@@ -157,3 +159,44 @@ CREATE TABLE `article_like` (
   FOREIGN KEY (`article_id`) REFERENCES `article`(`id`),
   FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='文章点赞记录表';
+
+-- 11. 首页播放器歌曲表（公开播放，登录后新增/删除）
+CREATE TABLE `music` (
+  `id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `title` varchar(100) NOT NULL COMMENT '歌曲标题',
+  `artist` varchar(50) DEFAULT 'Lynn' COMMENT '艺术家',
+  `url` varchar(500) NOT NULL COMMENT '音频URL（本地 /uploads/... 或 OSS）',
+  `cover_url` varchar(500) DEFAULT NULL COMMENT '封面URL',
+  `sort` int DEFAULT 0 COMMENT '排序（越小越靠前）',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='首页播放器歌曲表';
+
+-- 12. 好友链接表（公开展示，登录后管理；申请提交时 visible=0 待审核，user_id 可空）
+CREATE TABLE `friend_link` (
+  `id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL COMMENT '站点名',
+  `url` varchar(500) NOT NULL COMMENT '友链地址',
+  `avatar` varchar(500) DEFAULT NULL COMMENT '头像URL',
+  `description` varchar(200) DEFAULT NULL COMMENT '一句话介绍',
+  `sort` int DEFAULT 0 COMMENT '排序（越小越靠前）',
+  `visible` tinyint DEFAULT 1 COMMENT '1显示 0隐藏/待审核',
+  `user_id` bigint DEFAULT NULL COMMENT '录入者（申请提交可为空）',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='好友链接表';
+
+-- 13. 作品集表（公开展示，登录后管理）
+CREATE TABLE `project` (
+  `id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL COMMENT '项目名称',
+  `description` varchar(500) DEFAULT NULL COMMENT '项目简介',
+  `url` varchar(500) DEFAULT NULL COMMENT '在线地址',
+  `github_url` varchar(500) DEFAULT NULL COMMENT 'GitHub链接',
+  `tech` varchar(200) DEFAULT NULL COMMENT '技术栈（逗号分隔）',
+  `cover_image` varchar(500) DEFAULT NULL COMMENT '封面图URL',
+  `sort` int DEFAULT 0 COMMENT '排序（越小越靠前）',
+  `visible` tinyint DEFAULT 1 COMMENT '1显示 0隐藏',
+  `user_id` bigint NOT NULL,
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='作品集表';

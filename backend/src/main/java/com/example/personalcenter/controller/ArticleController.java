@@ -6,6 +6,7 @@ import com.example.personalcenter.common.Result;
 import com.example.personalcenter.common.ResultCode;
 import com.example.personalcenter.dto.article.ArticleNeighborsResp;
 import com.example.personalcenter.dto.article.ArticleReq;
+import com.example.personalcenter.dto.article.LikeResp;
 import com.example.personalcenter.entity.Article;
 import com.example.personalcenter.interceptor.JwtInterceptor;
 import com.example.personalcenter.service.ArticleService;
@@ -60,17 +61,18 @@ public class ArticleController {
         return Result.success();
     }
 
-    /** 公开分页列表：支持分类筛选、关键字搜索、排序（latest 最新 / hot 最热 / liked 点赞最多）、登录后按状态筛选 */
+    /** 公开分页列表：支持分类/标签筛选、关键字搜索、排序（latest 最新 / hot 最热 / liked 点赞最多）、登录后按状态筛选 */
     @GetMapping("/list")
     public Result<IPage<Article>> list(@RequestParam(defaultValue = "1") long page,
                                        @RequestParam(defaultValue = "10") long size,
                                        @RequestParam(required = false) Long categoryId,
+                                       @RequestParam(required = false) String tag,
                                        @RequestParam(required = false) String keyword,
                                        @RequestParam(defaultValue = "latest") String sort,
                                        @RequestParam(required = false) Integer status,
                                        HttpServletRequest request) {
         Long userId = getOptionalUserId(request);
-        return Result.success(articleService.pageList(page, size, categoryId, keyword, sort, status, userId));
+        return Result.success(articleService.pageList(page, size, categoryId, tag, keyword, sort, status, userId));
     }
 
     /** 公开详情（浏览量 +1） */
@@ -81,11 +83,11 @@ public class ArticleController {
     }
 
 
-    /** 点赞（一人一赞，需登录） */
+    /** 点赞/取消点赞（需登录） */
     @PostMapping("/{id}/like")
-    public Result<Integer> like(@PathVariable Long id, HttpServletRequest request) {
+    public Result<LikeResp> like(@PathVariable Long id, HttpServletRequest request) {
         Long userId = getCurrentUserId(request);
-        return Result.success(articleService.like(id, userId));
+        return Result.success(articleService.toggleLike(id, userId));
     }
 
     @GetMapping("/neighbors/{id}")

@@ -13,12 +13,17 @@ const routes = [
     children: [
       { path: '', name: 'Home', component: () => import('../views/Home.vue'), meta: { title: 'Home' } },
       { path: 'blog', name: 'Blog', component: () => import('../views/Blog.vue'), meta: { title: 'Blog' } },
-      { path: 'interview', name: 'Interview', component: () => import('../views/Interview.vue'), meta: { title: 'Interview' } },
+      { path: 'works', name: 'Works', component: () => import('../views/Works.vue'), meta: { title: 'Works' } },
       { path: 'lolita', name: 'Lolita', component: () => import('../views/Lolita.vue'), meta: { title: 'Lolita' } },
       { path: 'friends', name: 'Friends', component: () => import('../views/Friends.vue'), meta: { title: 'Friends' } },
       { path: 'guestbook', name: 'Guestbook', component: () => import('../views/Guestbook.vue'), meta: { title: 'Guestbook' } },
       { path: 'about', name: 'About', component: () => import('../views/About.vue'), meta: { title: 'About' } },
-      { path: 'article/:id', name: 'ArticleDetail', component: () => import('../views/ArticleDetail.vue'), meta: { title: '文章详情' } }
+      { path: 'archive', name: 'Archive', component: () => import('../views/Archive.vue'), meta: { title: '归档' } },
+      { path: 'tags', name: 'Tags', component: () => import('../views/Tags.vue'), meta: { title: '标签云' } },
+      { path: 'search', name: 'Search', component: () => import('../views/Search.vue'), meta: { title: '搜索' } },
+      { path: 'article/:id', name: 'ArticleDetail', component: () => import('../views/ArticleDetail.vue'), meta: { title: '文章详情' } },
+      // 兜底 404：保留三丽鸥公共布局（导航/左栏仍在），显示可爱错误页
+      { path: ':pathMatch(.*)*', name: 'NotFound', component: () => import('../views/NotFound.vue'), meta: { title: '404' } }
     ]
   },
   { path: '/login', name: 'Login', component: () => import('../views/Login.vue'), meta: { title: '登录' } },
@@ -30,13 +35,13 @@ const routes = [
       { path: '', name: 'Dashboard', component: () => import('../views/dashboard/Dashboard.vue'), meta: { title: '控制台概览' } },
       { path: 'article', name: 'DashboardArticle', component: () => import('../views/dashboard/ArticleManage.vue'), meta: { title: '文章管理' } },
       { path: 'category', name: 'DashboardCategory', component: () => import('../views/dashboard/CategoryManage.vue'), meta: { title: '分类管理' } },
-      { path: 'interview', name: 'DashboardInterview', component: () => import('../views/dashboard/InterviewManage.vue'), meta: { title: '面试库管理' } },
       { path: 'diary', name: 'DashboardDiary', component: () => import('../views/dashboard/DiaryManage.vue'), meta: { title: '私密日记本' } },
       { path: 'lolita', name: 'DashboardLolita', component: () => import('../views/dashboard/LolitaManage.vue'), meta: { title: '我的衣橱' } },
+      { path: 'friends', name: 'DashboardFriends', component: () => import('../views/dashboard/FriendManage.vue'), meta: { title: '友链管理' } },
+      { path: 'projects', name: 'DashboardProjects', component: () => import('../views/dashboard/ProjectManage.vue'), meta: { title: '作品管理' } },
       { path: 'files', name: 'DashboardFiles', component: () => import('../views/dashboard/FileManage.vue'), meta: { title: '我的相册' } }
     ]
-  },
-  { path: '/:pathMatch(.*)*', redirect: '/' }
+  }
 ]
 
 const router = createRouter({

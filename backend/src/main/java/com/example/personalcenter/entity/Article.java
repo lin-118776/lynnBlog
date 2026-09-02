@@ -40,6 +40,9 @@ public class Article {
     /** 分类ID */
     private Long categoryId;
 
+    /** 标签（英文逗号分隔，如：AI,折腾,教程） */
+    private String tags;
+
     /** 作者ID */
     private Long userId;
 

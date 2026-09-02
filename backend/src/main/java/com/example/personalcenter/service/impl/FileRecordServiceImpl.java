@@ -29,8 +29,8 @@ public class FileRecordServiceImpl extends ServiceImpl<FileRecordMapper, FileRec
             throw new BusinessException("上传文件不能为空");
         }
 
-        // 保存文件到本地磁盘
-        String url = fileUploadUtil.save(file);
+        // 保存文件（优先 OSS，回退本地磁盘）
+        String url = fileUploadUtil.save(file, bizType);
 
         // 记录文件元数据
         FileRecord record = new FileRecord();

@@ -10,6 +10,7 @@ import com.example.personalcenter.common.BusinessException;
 import com.example.personalcenter.common.ResultCode;
 import com.example.personalcenter.dto.article.ArticleNeighborsResp;
 import com.example.personalcenter.dto.article.ArticleReq;
+import com.example.personalcenter.dto.article.LikeResp;
 import com.example.personalcenter.entity.Article;
 import com.example.personalcenter.entity.ArticleLike;
 import com.example.personalcenter.entity.Category;
@@ -48,6 +49,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setContent(req.getContent());
         article.setCoverImage(req.getCoverImage());
         article.setCategoryId(req.getCategoryId());
+        article.setTags(req.getTags());
         article.setStatus(req.getStatus() == null ? 1 : req.getStatus());
         article.setUserId(userId);
         save(article);
@@ -61,6 +63,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         article.setContent(req.getContent());
         article.setCoverImage(req.getCoverImage());
         article.setCategoryId(req.getCategoryId());
+        article.setTags(req.getTags());
         article.setStatus(req.getStatus());
         updateById(article);
     }
@@ -72,12 +75,13 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public IPage<Article> pageList(long page, long size, Long categoryId, String keyword, String sort, Integer status, Long userId) {
+    public IPage<Article> pageList(long page, long size, Long categoryId, String tag, String keyword, String sort, Integer status, Long userId) {
         // 可见性规则：
         //   匿名：仅已发布
         //   作者：status=null 时 已发布 + 自己的草稿；status=0 时 仅自己的草稿；status=1 时 全部已发布
         LambdaQueryChainWrapper<Article> wrapper = lambdaQuery()
                 .eq(categoryId != null, Article::getCategoryId, categoryId)
+                .apply(StringUtils.hasText(tag), "FIND_IN_SET({0}, tags)", tag)
                 .and(StringUtils.hasText(keyword), w -> w.like(Article::getTitle, keyword)
                         .or().like(Article::getSummary, keyword)
                         .or().like(Article::getContent, keyword));
@@ -118,8 +122,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         // 浏览量原子 +1
         update(null, new UpdateWrapper<Article>().eq("id", id).setSql("view_count = view_count + 1"));
         article.setViewCount(article.getViewCount() == null ? 1 : article.getViewCount() + 1);
-        // 当前用户是否已点赞
+        // 当前用户是否已点赞 + 补全分类名/作者信息
         article.setIsLiked(userId != null && isLiked(id, userId));
+        fillArticle(article);
         return article;
     }
 
@@ -150,28 +155,42 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     }
 
     @Override
-    public int like(Long id, Long userId) {
+    public LikeResp toggleLike(Long id, Long userId) {
         Article article = getById(id);
         if (article == null) {
             throw new BusinessException(ResultCode.NOT_FOUND);
         }
-        // 一人一赞：先查后插，UNIQUE(article_id, user_id) 兜底并发重复
+        // 已赞则取消，未赞则点赞（UNIQUE(article_id, user_id) 兜底并发）
         Long liked = articleLikeMapper.selectCount(new QueryWrapper<ArticleLike>()
                 .eq("article_id", id)
                 .eq("user_id", userId));
+        boolean nowLiked;
         if (liked != null && liked > 0) {
-            throw new BusinessException("已经赞过啦");
+            // 取消点赞
+            articleLikeMapper.delete(new QueryWrapper<ArticleLike>()
+                    .eq("article_id", id)
+                    .eq("user_id", userId));
+            update(null, new UpdateWrapper<Article>()
+                    .eq("id", id)
+                    .setSql("like_count = GREATEST(like_count - 1, 0)"));
+            nowLiked = false;
+        } else {
+            ArticleLike like = new ArticleLike();
+            like.setArticleId(id);
+            like.setUserId(userId);
+            try {
+                articleLikeMapper.insert(like);
+            } catch (DuplicateKeyException e) {
+                // 并发重复插入：视为已赞，仅同步计数
+                nowLiked = true;
+                int count = getById(id).getLikeCount() == null ? 0 : getById(id).getLikeCount();
+                return new LikeResp(true, count);
+            }
+            update(null, new UpdateWrapper<Article>().eq("id", id).setSql("like_count = like_count + 1"));
+            nowLiked = true;
         }
-        ArticleLike like = new ArticleLike();
-        like.setArticleId(id);
-        like.setUserId(userId);
-        try {
-            articleLikeMapper.insert(like);
-        } catch (DuplicateKeyException e) {
-            throw new BusinessException("已经赞过啦");
-        }
-        update(null, new UpdateWrapper<Article>().eq("id", id).setSql("like_count = like_count + 1"));
-        return article.getLikeCount() == null ? 1 : article.getLikeCount() + 1;
+        int count = getById(id).getLikeCount() == null ? 0 : getById(id).getLikeCount();
+        return new LikeResp(nowLiked, count);
     }
 
     /** 判断用户是否已点赞某篇文章 */

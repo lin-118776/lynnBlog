@@ -16,11 +16,11 @@
             @click="menuOpen = false"
           >文章</router-link>
           <router-link
-            to="/interview"
+            to="/works"
             class="nav-link"
-            :class="{ active: route.path.startsWith('/interview') }"
+            :class="{ active: route.path.startsWith('/works') }"
             @click="menuOpen = false"
-          >面试广场</router-link>
+          >作品</router-link>
           <router-link
             to="/lolita"
             class="nav-link"
@@ -159,7 +159,7 @@ watch(() => route.path, () => { menuOpen.value = false })
 .nav-link.active {
   color: var(--brand);
   background: var(--el-color-primary-light-9);
-  font-weight: 600;
+  font-weight:500;
 }
 
 .nav-dash {
