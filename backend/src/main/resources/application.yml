@@ -7,9 +7,10 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 数据库需先创建 personalcenter 库（字符集 utf8mb4）
-    url: jdbc:mysql://localhost:3306/personalcenter?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 123456
+    # 生产/容器化用环境变量覆盖：DB_HOST、DB_PORT、DB_USERNAME、DB_PASSWORD
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/personalcenter?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
   servlet:
     multipart:
       # 文件上传大小限制：20MB
@@ -35,8 +36,8 @@ mybatis-plus:
 
 # 自定义配置：JWT
 jwt:
-  # Token 密钥，生产环境务必替换为足够长的随机字符串
-  secret: personalcenter-jwt-secret-key-please-change-in-production-2026
+  # Token 密钥，生产环境务必替换为足够长的随机字符串（环境变量 JWT_SECRET 覆盖）
+  secret: "${JWT_SECRET:personalcenter-jwt-secret-key-please-change-in-production-2026}"
   # Token 过期时间：7 天（毫秒）
   expiration: 604800000
 

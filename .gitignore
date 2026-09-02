@@ -28,3 +28,4 @@ Thumbs.db
 
 # IDEA 本地运行配置（含 OSS 密钥，勿提交）
 .run/
+.be8080.log

@@ -62,6 +62,7 @@ import { ref, onMounted } from 'vue'
 import ImgSlot from '../components/ImgSlot.vue'
 import CardPanel from '../components/CardPanel.vue'
 import { listArticles } from '../api/article'
+import { listGuestbook } from '../api/guestbook'
 import bannerSrc from '../images/banner.mp4'
 import musicSrc from '../images/music.mp3'
 import coverSrc from '../images/音乐封面.jpg'
@@ -69,24 +70,27 @@ import barrageBg from '../images/留言弹幕背景图.jpg'
 
 const latestArticles = ref([])
 
-// ===== 主内容区：留言弹幕（数据源占位，后续替换为真实留言接口） =====
-const danmaku = [
-  { text: '♥ 欢迎光临 Lynn 的小站' },
-  { text: '今天也要元气满满！' },
-  { text: '✿ 裙子都好可爱～' },
-  { text: '小裙子收藏家出没' },
-  { text: '打卡！' },
-  { text: '粉色系赛高！' },
-  { text: '✧ 每一件都心动' },
-  { text: '路过留个爪印' },
-  { text: '手账风好好看 ✿' },
-  { text: 'Lynn 加油～' },
-  { text: '今天也很开心 ♥' },
-  { text: '愿你天天好心情' },
-  { text: '裙子墙太绝了！' },
-  { text: '悄悄路过～' },
-  { text: '✨ 好喜欢这个站' },
-  { text: '下次再来玩！' }
+// ===== 留言弹幕：数据源 = 留言板真实留言；没有留言时用欢迎语兜底 =====
+const danmaku = ref([])
+
+// 兜底欢迎语（无真实留言时使用，营造"有人气"的暖场感）
+const WELCOME_DANMAKU = [
+  '♥ 欢迎光临 Lynn 的小站',
+  '今天也要元气满满！',
+  '✿ 裙子都好可爱～',
+  '小裙子收藏家出没',
+  '打卡！',
+  '粉色系赛高！',
+  '✧ 每一件都心动',
+  '路过留个爪印',
+  '手账风好好看 ✿',
+  'Lynn 加油～',
+  '今天也很开心 ♥',
+  '愿你天天好心情',
+  '裙子墙太绝了！',
+  '悄悄路过～',
+  '✨ 好喜欢这个站',
+  '下次再来玩！'
 ]
 
 function barrageStyle(i) {
@@ -95,6 +99,37 @@ function barrageStyle(i) {
     animationDuration: `${10 + (i % 6) * 3.5}s`,
     animationDelay: `${-(i * 2.6)}s`,
     fontSize: `${15 + (i % 4) * 2}px`
+  }
+}
+
+// 拉取留言板内容做弹幕：最多 4 页；不足 10 条时混入欢迎语保证画面饱满
+async function loadDanmaku() {
+  const bullets = []
+  try {
+    for (let page = 1; page <= 4; page++) {
+      const { data } = await listGuestbook(page, 10)
+      const records = data.records || []
+      records.forEach((m) => {
+        const t = String(m.content || '').replace(/\s+/g, ' ').trim()
+        if (t) bullets.push(t.length > 30 ? `${t.slice(0, 30)}…` : t)
+      })
+      if (records.length < 10) break
+    }
+  } catch (e) {
+    bullets.length = 0 // 接口异常走兜底
+  }
+  // 无留言（或太少）时用欢迎语补充
+  if (bullets.length === 0) {
+    danmaku.value = WELCOME_DANMAKU.map((text) => ({ text }))
+  } else {
+    bullets.forEach((t) => {
+      if (danmaku.value.length < 24) danmaku.value.push({ text: t })
+    })
+    if (danmaku.value.length < 8) {
+      WELCOME_DANMAKU.forEach((text) => {
+        if (danmaku.value.length < 24) danmaku.value.push({ text })
+      })
+    }
   }
 }
 
@@ -132,6 +167,7 @@ function formatDate(value) {
 }
 
 onMounted(async () => {
+  loadDanmaku()
   try {
     const { data } = await listArticles(1, 6)
     latestArticles.value = data.records || []

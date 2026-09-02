@@ -82,8 +82,18 @@ npm run dev
 # 4. 浏览器打开 http://localhost:5173
 ```
 
-> 数据库连接 / JWT 密钥在 `backend/src/main/resources/application.yml`，生产环境请用环境变量替换。
+> 数据库连接 / JWT 密钥在 `backend/src/main/resources/application.yml`，生产环境请用环境变量（`DB_HOST / DB_PORT / DB_USERNAME / DB_PASSWORD / JWT_SECRET`）替换。
 > 阿里云 OSS 为**可选**（`OSS_ENABLED=false` 默认本地存储），启用时注入 `OSS_ACCESS_KEY / OSS_ACCESS_SECRET` 等环境变量即可，密钥不落盘。
+
+## 🐳 容器化部署（Docker Compose 一键起）
+
+```bash
+cp .env.example .env                 # 修改数据库密码与 JWT 密钥
+docker compose up -d --build         # 一键启动 MySQL + 后端 + 前端
+# 浏览器访问 http://<IP>:8080
+```
+
+详细运维 / 公网 / 备案 / 常见问题见 [docs/DEPLOY.md](docs/DEPLOY.md)。
 
 ## 📡 主要接口
 

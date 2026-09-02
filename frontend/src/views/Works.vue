@@ -6,6 +6,9 @@
       <p class="works-sub">做过的项目，都认真地记录下来 ♥</p>
     </header>
 
+    <!-- GitHub 仪表盘：账号统计 + 最近活跃仓库 -->
+    <GithubDashboard />
+
     <div v-loading="loading" class="works-grid">
       <article
         v-for="(p, i) in projects"
@@ -45,6 +48,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import GithubDashboard from '../components/GithubDashboard.vue'
 import { listProjects } from '../api/project'
 
 const projects = ref([])
@@ -72,7 +76,7 @@ onMounted(async () => {
 .works-head{padding:20px 22px 16px;border:1px solid var(--pink-200,#ffd0e1);border-radius:var(--radius-lg,22px);background:linear-gradient(160deg,#fff5f8,#ffe7f0);box-shadow:var(--shadow,0 12px 30px rgba(183,85,129,.12))}
 .works-title{margin:0;font-size:26px;color:var(--berry,#a63b64);letter-spacing:3px}
 .works-title em{display:block;margin-top:4px;font-style:normal;font-size:11px;letter-spacing:5px;color:var(--pink-400,#f9a8c4)}
-.works-sub{margin:10px 0 0;font-family:"Kaiti SC","STKaiti",KaiTi,serif;font-size:14px;color:var(--rose,#e45b8d)}
+.works-sub{margin:10px 0 0;font-size:14px;color:var(--rose,#e45b8d)}
 .works-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;min-height:160px}
 .work-card{display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--pink-100,#ffe7f0);border-radius:16px;background:#fff;box-shadow:0 6px 16px rgba(183,85,129,.1);transition:transform .22s cubic-bezier(.22,.9,.3,1.3),box-shadow .22s ease}
 .work-card.tilt-1{transform:rotate(-.5deg)}

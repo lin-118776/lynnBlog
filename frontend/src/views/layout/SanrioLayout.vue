@@ -19,7 +19,7 @@
             :class="{ active: isActive(item.key) }"
             :to="item.to"
             @click="menuOpen = false"
-          ><span class="tab-ico" v-html="item.icon"></span>{{ item.label }}</router-link>
+          ><span class="tab-ico" v-html="item.icon"></span><span class="tab-zh">{{ item.zh }}</span><span class="tab-en" aria-hidden="true">{{ item.label }}</span></router-link>
           <router-link
             v-if="isLoggedIn"
             to="/dashboard"
@@ -143,15 +143,15 @@ const route = useRoute()
 const router = useRouter()
 const menuOpen = ref(false)
 
-// 导航项：全部跳转独立页面（参考 xnmoe.com）
+// 导航项：常态显示中文、鼠标悬浮切换为英文（label 保留英文全称）
 const navItems = [
-  { to: '/', key: '', label: 'Home', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></svg>' },
-  { to: '/blog', key: 'blog', label: 'Blog', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h5a3 3 0 0 1 3 3v11H7a2 2 0 0 1-2-2V5Z"/><path d="M10 8h6a3 3 0 0 1 3 3v7"/></svg>' },
-  { to: '/works', key: 'works', label: 'Works', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>' },
-  { to: '/lolita', key: 'lolita', label: 'Lolita', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3.2 3.4 6.4 1.5 9-1.4 1.9-3.8 2-5.2.4-1.4-1.7-.4-4.6 2-6.4"/><path d="M7.5 16.5c2.4 1.8 4.4 1.5 5.8 0"/></svg>' },
-  { to: '/friends', key: 'friends', label: 'Friends', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M15 3.1a4 4 0 0 1 0 7.8"/></svg>' },
-  { to: '/guestbook', key: 'guestbook', label: 'Guestbook', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>' },
-  { to: '/about', key: 'about', label: 'About', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg>' }
+  { to: '/', key: '', label: 'Home', zh: '首页', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11 12 4l8 7"/><path d="M6 10v9h12v-9"/></svg>' },
+  { to: '/blog', key: 'blog', label: 'Blog', zh: '博客', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 5h5a3 3 0 0 1 3 3v11H7a2 2 0 0 1-2-2V5Z"/><path d="M10 8h6a3 3 0 0 1 3 3v7"/></svg>' },
+  { to: '/works', key: 'works', label: 'Works', zh: '作品', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>' },
+  { to: '/lolita', key: 'lolita', label: 'Lolita', zh: '穿搭', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3.2 3.4 6.4 1.5 9-1.4 1.9-3.8 2-5.2.4-1.4-1.7-.4-4.6 2-6.4"/><path d="M7.5 16.5c2.4 1.8 4.4 1.5 5.8 0"/></svg>' },
+  { to: '/friends', key: 'friends', label: 'Friends', zh: '友链', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9.5" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9"/><path d="M15 3.1a4 4 0 0 1 0 7.8"/></svg>' },
+  { to: '/guestbook', key: 'guestbook', label: 'Guestbook', zh: '留言板', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.8 2.8 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z"/></svg>' },
+  { to: '/about', key: 'about', label: 'About', zh: '关于', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><path d="M12 7h.01"/></svg>' }
 ]
 
 function isActive(key) {
@@ -252,7 +252,7 @@ function cancelEdit() {
 </script>
 
 <style scoped>
-.sanrio-page{--pink-50:#fff7fa;--pink-100:#ffe7f0;--pink-200:#ffd0e1;--pink-300:#ffb7d0;--pink-400:#f9a8c4;--rose:#e45b8d;--berry:#a63b64;--ink:#4a2b3a;--muted:#8a6475;--cream:#fffaf5;--mint:#cdeede;--sky:#d9edfb;--lemon:#fff1b8;--line:#efc2d3;--shadow:0 12px 30px rgba(183,85,129,.12);--radius-lg:22px;--radius-md:16px;--rail-w:284px;--nav-h:66px;min-height:100vh;color:var(--ink);font-family:ui-rounded,"Hiragino Maru Gothic ProN","Yu Gothic","Microsoft YaHei","PingFang SC",sans-serif;line-height:1.6;background-color:var(--pink-100);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.36) 0 2px,transparent 2px 18px),repeating-linear-gradient(90deg,rgba(255,255,255,.36) 0 2px,transparent 2px 18px),linear-gradient(180deg,#ffe3ee 0%,#fff4f8 42%,#f9f0f5 100%);background-attachment:fixed}
+.sanrio-page{--pink-50:#fff7fa;--pink-100:#ffe7f0;--pink-200:#ffd0e1;--pink-300:#ffb7d0;--pink-400:#f9a8c4;--rose:#e45b8d;--berry:#a63b64;--ink:#4a2b3a;--muted:#8a6475;--cream:#fffaf5;--mint:#cdeede;--sky:#d9edfb;--lemon:#fff1b8;--line:#efc2d3;--shadow:0 12px 30px rgba(183,85,129,.12);--radius-lg:22px;--radius-md:16px;--rail-w:284px;--nav-h:66px;min-height:100vh;color:var(--ink);font-family:var(--font-body,ui-rounded,"Hiragino Maru Gothic ProN","Yu Gothic","Microsoft YaHei","PingFang SC",sans-serif);line-height:1.6;background-color:var(--pink-100);background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.36) 0 2px,transparent 2px 18px),repeating-linear-gradient(90deg,rgba(255,255,255,.36) 0 2px,transparent 2px 18px),linear-gradient(180deg,#ffe3ee 0%,#fff4f8 42%,#f9f0f5 100%);background-attachment:fixed}
 .sanrio-page *{box-sizing:border-box}
 .sanrio-page a{color:var(--rose);text-decoration:none;transition:color .2s ease,background-color .2s ease,transform .2s ease}
 .sanrio-page a:hover{color:var(--berry)}
@@ -272,6 +272,10 @@ function cancelEdit() {
 .nav-tab.active{color:var(--berry);background:linear-gradient(180deg,var(--pink-200),var(--pink-100));border-color:var(--line);box-shadow:0 4px 12px rgba(227,91,141,.12)}
 .nav-tab .tab-ico{display:inline-flex}
 .nav-tab svg{width:15px;height:15px;flex:0 0 auto}
+/* 双语导航：常态中文，悬浮时切英文（active 项同样 hover 生效） */
+.nav-tab .tab-en{display:none}
+.nav-tab:hover .tab-zh,.nav-tab:focus-visible .tab-zh{display:none}
+.nav-tab:hover .tab-en,.nav-tab:focus-visible .tab-en{display:inline}
 .nav-console{margin-left:auto;color:var(--rose,#e45b8d);background:var(--pink-50,#fff7fa);border:1px solid var(--pink-200,#ffd0e1);border-radius:999px;box-shadow:none}
 .nav-console:hover{color:var(--berry,#a63b64);background:var(--pink-100,#ffe7f0);border-color:var(--pink-300,#ffb7d0);transform:translateY(-1px)}
 .nav-console.active{color:var(--berry,#a63b64);background:var(--pink-100,#ffe7f0);border-color:var(--pink-300,#ffb7d0);box-shadow:none}

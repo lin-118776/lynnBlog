@@ -160,7 +160,7 @@ onMounted(() => load())
 .head-bow svg{width:52px;height:34px;filter:drop-shadow(0 3px 6px rgba(227,91,141,.28))}
 .head-title{margin:2px 0 0;font-size:30px;line-height:1.1;color:var(--berry,#a63b64);letter-spacing:3px}
 .head-title em{display:block;margin-top:6px;font-style:normal;font-size:11px;letter-spacing:5px;color:var(--pink-400,#f9a8c4)}
-.head-sub{margin:12px 0 0;font-family:"Kaiti SC","STKaiti",KaiTi,serif;font-size:15px;color:var(--rose,#e45b8d)}
+.head-sub{margin:12px 0 0;font-size:15px;color:var(--rose,#e45b8d)}
 .head-stars{margin-top:10px;color:var(--pink-400,#f9a8c4);font-size:13px;letter-spacing:12px}
 
 /* ===== 分类贴纸 ===== */
@@ -206,7 +206,7 @@ onMounted(() => load())
 .note-row{display:flex;gap:12px;font-size:13px;border-bottom:1px dashed var(--pink-200,#ffd0e1);padding-bottom:8px}
 .note-row span{flex:none;width:62px;color:var(--muted,#8a6475)}
 .note-row b{color:var(--ink,#4a2b3a)}
-.note-text{margin-top:4px;font-family:"Kaiti SC","STKaiti",KaiTi,serif;font-size:14px;line-height:1.8;color:var(--berry,#a63b64);white-space:pre-wrap}
+.note-text{margin-top:4px;font-size:14px;line-height:1.8;color:var(--berry,#a63b64);white-space:pre-wrap}
 @media (max-width:1100px){
   .wall{grid-template-columns:repeat(3,minmax(0,1fr))}
 }

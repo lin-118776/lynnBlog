@@ -200,3 +200,13 @@ CREATE TABLE `project` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`user_id`) REFERENCES `user`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='作品集表';
+
+-- 14. 留言板表（公开读取 + 游客留言，无需登录）
+CREATE TABLE `guestbook` (
+  `id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `nickname` varchar(30) NOT NULL COMMENT '昵称（游客自填）',
+  `content` varchar(300) NOT NULL COMMENT '留言内容',
+  `ip` varchar(45) DEFAULT NULL COMMENT '留言IP（不对外展示）',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP,
+  KEY `idx_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='留言板表';
